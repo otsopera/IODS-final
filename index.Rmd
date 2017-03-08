@@ -39,7 +39,7 @@ CO2_all <- read.table("./data/CO2_4_sites.txt",header = T,  dec = ".")
 
 ```
 
-I have already wrangled the data into an easily analyzable form: the wrangling script can be found [here](https://github.com/otsopera/IODS-final/blob/master/data/create_CO2.R). The wrangled data contains `r nrow(CO2_all) ` monthly carbon dioxide concentration values from the stations. Some of the observations are missing. In total, the data contains `r ncol(CO2_all) ` variables, which are the following:
+I have already wrangled the data into an easily analyzable form: the wrangling script can be found [here](https://github.com/otsopera/IODS-final/blob/master/data/create_CO2.R). The wrangled data contains `r nrow(CO2_all) ` monthly carbon dioxide (CO$_2$) concentration values from the stations. Some of the observations are missing. In total, the data contains `r ncol(CO2_all) ` variables, which are the following:
 
 ```{r vars}
 
@@ -48,9 +48,45 @@ variable.names(CO2_all)
 
 ```
 
-Here the variable suffixes (_MLO, _BRW, _SMO, _SPO) tell the station where the measurement comes from. Tha variable value is the monthly mean carbon dioxide concentration, in parts per million (ppm). value_unc is the uncertainty estimate for the measurement, also in ppm. nvalue tells how many individual measurements have gone into the value: for one monthly value, multiple individual measurements have been averaged. Lastly, the date_time tells the month that the measurement corresponds to. 
+The variables MLO, BRW, SMO, SPO are the monthly mean carbon dioxide concentrations, in parts per million (ppm). Different variables are the measurements from different stations. The date_time variable tells the time of the measurement. To get a feel for the data, let's start plotting it. We will begin with plotting the time series of the CO$_2$ concentration in Mauna Loa.
 
 
+```{r MLO_CO2, echo=FALSE}
+
+
+
+p <- ggplot(CO2_all, aes(as.POSIXct(date_time,origin="1970-01-01"), MLO)) + geom_point() + theme(text = element_text(size=20)) + labs(y=expression(CO["2"]~concentration~(ppm)), x = "Time") + ggtitle("Carbon dioxide concentration in Mauna Loa")
+p
+
+
+
+```
+
+
+The x label starts from the year 1974 and ends in 2015: unfortunately something went wrong with the plotting, and the axis ticks are all messed up. The full CO$_2$ data from Mauna Loa starts already in 1958, but NOAA has been handling the measurement from 1974 so that is why my data starts from there.
+
+There are a few immediately obvious features in the data. First of all, the carbon dioxide concentration has been constantly rising. The concentration starts at around 330 ppm in 1974, and rises up to around 400 ppm by 2015. This is caused by anthropogenic carbon emissions. On short term, around half of the anthropogenic emissions end up in the atmosphere. Roughly one quarter each is taken up by the oceans and the land biosphere. 
+
+The other notable feature is the annual cycle of the carbon dioxide concentration. Each year, the highest concentrations are seen in the spring, and the lowes ones in the autumn. This cycle is caused by the biosphere. In the northern hemispheric winter, there is little photsynthesis, so the vegetation takes up only little carbon dioxide. Still, the biosphere is breathing all the time and releasing carbon dioxide into the air. This leads to accumulation of carbon dioxide over the winter, and maximum concentrations in the spring. In the summer, the photosynthesis works its wonders and vegetation captures large quantities of carbon dioxide from the air. This means that during the summer the carbon dioxide concentration temporarily decreases, and reaches its minimum in the autumn. On the timescale of more than a few years, the biosphere takes up slightly more carbon than it releases. This extra carbon comes from anthropogenis emissions: as said earlier, around a quarter of them end up in the biosphere. 
+
+So the general trend in the carbon dioxide concentration measured in Mauna Loa can be explained by the long-term increase, caused by mankind, and the annual cycle, caused by vegetation. In the southern hemisphere the situation is slightly different. Let's look at the data from South Pole to see exactly how it differs.  
+
+```{r SPO_CO2, echo=FALSE}
+
+
+
+p2 <- ggplot(CO2_all, aes(as.POSIXct(date_time,origin="1970-01-01"), SPO)) + geom_point() + theme(text = element_text(size=20)) + labs(y=expression(CO["2"]~concentration~(ppm)), x = "Time") + ggtitle("Carbon dioxide concentration in South Pole")
+p2
+
+
+
+```
+
+Now the data starts from the end of 1975, and there is a small break after a couple of years. We can see the same general increase in the concentration as we saw in the Mauna Loa data. This tells us that the rising carbon dioxide level is a global phenomenon: CO$_2$ is a long lived greenhouse gas, and has time to get evenly distributed in the atmosphere.
+
+What is different from Mauna Loa is that now the annual variation is much smaller. Another difference, which you might not see that easily due to the bac ticks, is that the annual variation is in the opposite phase compared to Mauna Loa. Now we have the highest concentrations measured in the northern hemispheric autumn, and lowest in the spring. The opposite behaviour is caused by the seasons being flipped: in the southern hemisphere the summer is coincident with the northern hemispheric winter, and vice versa. The smaller annual variation, or amplitude, is caused by there being less land vegetation in the high latitudes of the southern hemisphere. And as there is less vegetation, there is less variation in photosynthesis, and smaller amplitude in the annual variation. So the annual variation tells us something about the activity of the vegetation: a high amplitude means lot of vegetation in the high latitudes.    
+
+To compare the two series more directly, we can plot them in the same figure:
 
 
 ## Including Plots
@@ -59,9 +95,48 @@ You can also embed plots, for example:
 
 ```{r pressure, echo=FALSE}
 
+library(reshape2)
 
 
-qplot(date_time,value_MLO,data = CO2_all) 
+
+  
+CO2_MLO_SPO <- melt(CO2_all[,c(1,4,5)],id="date_time")
+colnames(CO2_MLO_SPO) <- c("date_time","Station","value") 
+ 
+
+p3 <- ggplot(CO2_MLO_SPO, aes(as.POSIXct(date_time,origin="1970-01-01"), value, colour = Station))
+p3 + geom_point()  + theme(text = element_text(size=20)) + labs(y=expression(CO["2"]~concentration~(ppm)), x = "Time") + ggtitle("Carbon dioxide concentration")
+
+
+
+
 ```
+
+We now notice that the CO$_2$ measured at South Pole is also slightly lower compared to Mauna Loa. This is due to most of the anthropogenic carbon emissions happening in the Northern Hemisphere. It takes some time for the emissions to mix across the equator: this causes the gradient between the hemispheres. 
+
+So far we have seen that the time series of carbon dioxide concentration can tell us many things. The constant increase tells of anthropogenic carbon emissions. This shows also in the inter-hemispheric gradient of the CO$_2$ concentration. The amplitude of the annual variation tells us about the activity of the biosphere. The higher the amplitude, the more active the biosphere is. Next we will see how much information we can dig from these time series. I will analyze the Mauna Loa and the South Pole data. In addition, I will look at the data from Barrow (a station in Alaska, at a high latitude in the Northern Hemisphere), and American Samoa (a station in the Pacific Ocean, at low latitude in the Southern Hemisphere). So in total I will analyze data from four stations: two in the Nothern Hemisphere, and two in the Southern. 
+
+## Growth rate of the carbon dioxide concentration
+
+To calculate the overall growth rate of the CO$_2$ concentration in Mauna Loa, I will perform a linear regression analysis on the CO$_2$ concentration there. As I want to see how the concentration changes over time, I will have only one explanatory variable: date_time. Now date_time is measured in seconds: to get more sensible values for the coefficients, I will convert it to years and use that in the analysis.
+
+
+
+```{r code4, echo = T}
+
+CO2_all$date_years = CO2_all$date_time/(60*60*24*365.25)
+my_model <- lm(MLO ~ date_years, data = CO2_all)
+
+# print out a summary of the model
+summary(my_model)
+```
+
+
+We can see that the coefficient for the time in years is highlystatistically highly sighificant. It has a value of 1.7: this roughly translates to an average growth rate in the carbon dioxide concentration of 1.7 ppm per year. 
+
+
+
+
+
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.

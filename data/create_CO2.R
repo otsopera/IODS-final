@@ -2,7 +2,7 @@
 # Data wragling part
 
 # set working directory
-setwd("D:/Documents/Courses/IODS/IODS-final/data_monthly")
+setwd("D:/Documents/Courses/IODS/IODS-final/data")
 
 
 # clear all variables possibly left over from previous sessions
@@ -26,8 +26,8 @@ colnames(CO2_SPO) <- c("site_code", "year","month","day","hour","minute","second
 
 
 # columns to keep
-# keep the year and month of the measurement, the measurement value, its uncertainty, and the number of measurements that went into calculating the value
-keep <- c("year","month","day","value","value_unc","nvalue")
+# keep the year and month of the measurement, the measurement value
+keep <- c("year","month","day","value")
 
 # select the 'keep' columns
 CO2_MLO <- select(CO2_MLO, one_of(keep))
@@ -41,21 +41,21 @@ CO2_SPO <- select(CO2_SPO, one_of(keep))
 
 
 # define missing value symbols and convert to NAs
-unc_missing <- -99.990
+
 value_missing <- -999.990
 
 
 CO2_MLO$value[CO2_MLO$value == value_missing] <- NA;
-CO2_MLO$value_unc[CO2_MLO$value_unc == unc_missing] <- NA;
+
 
 CO2_BRW$value[CO2_BRW$value == value_missing] <- NA;
-CO2_BRW$value_unc[CO2_BRW$value_unc == unc_missing] <- NA;
+
 
 CO2_SMO$value[CO2_SMO$value == value_missing] <- NA;
-CO2_SMO$value_unc[CO2_SMO$value_unc == unc_missing] <- NA;
+
 
 CO2_SPO$value[CO2_SPO$value == value_missing] <- NA;
-CO2_SPO$value_unc[CO2_SPO$value_unc == unc_missing] <- NA;
+
 
 
 
@@ -77,7 +77,7 @@ CO2_all <- merge(MLO_BRW,SMO_SPO,by=join_by,suffix = c('SMO','SPO'),all = TRUE)
 
 
 # convert the year,month,day date format to more sensible
-CO2_all$date_time <- as.Date(ISOdate(CO2_all$year,CO2_all$month,CO2_all$day_BRW))
+CO2_all$date_time <- as.numeric(as.POSIXct(ISOdate(CO2_all$year,CO2_all$month,CO2_all$day_BRW)))
 
 
 # delete the old time variables
@@ -90,7 +90,8 @@ CO2_all$month <- NULL
 
 
 
-
+# change the concentration variable names to the stations
+colnames(CO2_all) = c("MLO","BRW","SMO","SPO","date_time")
 
 print(nrow(CO2_all)) # 516 observations
 
