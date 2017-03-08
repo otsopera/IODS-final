@@ -63,7 +63,7 @@ p
 ```
 
 
-The x label starts from the year 1974 and ends in 2015: unfortunately something went wrong with the plotting, and the axis ticks are all messed up. The full CO$_2$ data from Mauna Loa starts already in 1958, but NOAA has been handling the measurement from 1974 so that is why my data starts from there.
+The data starts from the year 1974 and ends in 2015. The full CO$_2$ data from Mauna Loa starts already in 1958, but NOAA has been handling the measurement from 1974 so that is why my data starts from there.
 
 There are a few immediately obvious features in the data. First of all, the carbon dioxide concentration has been constantly rising. The concentration starts at around 330 ppm in 1974, and rises up to around 400 ppm by 2015. This is caused by anthropogenic carbon emissions. On short term, around half of the anthropogenic emissions end up in the atmosphere. Roughly one quarter each is taken up by the oceans and the land biosphere. 
 
@@ -89,11 +89,8 @@ What is different from Mauna Loa is that now the annual variation is much smalle
 To compare the two series more directly, we can plot them in the same figure:
 
 
-## Including Plots
 
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
+```{r MLO_SPO, echo=FALSE}
 
 library(reshape2)
 
@@ -122,7 +119,7 @@ To calculate the overall growth rate of the CO$_2$ concentration in Mauna Loa, I
 
 
 
-```{r code4, echo = T}
+```{r make_first_model, echo = T}
 
 CO2_all$date_years = CO2_all$date_time/(60*60*24*365.25)
 my_model <- lm(MLO ~ date_years, data = CO2_all)
@@ -132,11 +129,30 @@ summary(my_model)
 ```
 
 
-We can see that the coefficient for the time in years is highlystatistically highly sighificant. It has a value of 1.7: this roughly translates to an average growth rate in the carbon dioxide concentration of 1.7 ppm per year. 
+We can see that the coefficient for the time in years is statistically highly sighificant. This makes sense, as a very clear trend could also be seen from the time series. It has a value of 1.7: this roughly translates to an average growth rate in the carbon dioxide concentration of 1.7 ppm per year. Of course, this increase has not been uniform. Firstly, the annual cycle of the carbon dioxide concentration affects the values on a short time scale. Secondly, changes in mankinds carbon emissions and the fraction that remains in the atmosphere have caused longer term variability in the growth rate. These aspects shoudl be visible when looking at the residuals: we should be left with the annual oscillation, plus some longer term changes in the residuals. Let's see:
+
+
+ 
+```{r model1_diag}
+
+# draw diagnostic plots using the plot() function. Choose the plots 1, 2 and 5
+
+#par(mfrow = c(2,2))
+# plot(my_model)
+
+MLO_complete_cases <- (complete.cases(CO2_all$MLO))
+date_time_MLO <- CO2_all$date_time[MLO_complete_cases]
+plot(as.POSIXct(date_time_MLO,origin="1970-01-01"),resid(my_model)) + theme(text = element_text(size=20))# + title(ylab="Residual (ppm)", xlab = "Time")# + ggtitle("Residuals vs. time")
+
+```
 
 
 
+We can see that there clearly is some systematic variation in the residuals. The residuals keep on decreasing until around 1995, and increasing after that. This means that until 1995, the model has been over-estimating the growth rate of carbon dioxide concentration, and after that it has been underestimating it. So the dependence is not a simple, purely linear one as we already suspected. Additionally, the seasonal cycle of the concentrations can also be seen in the residuals, although it is less clear now. 
 
+We could average the data over one year to get rid of the annual cycle: this woul leave us with the long-term increasing trend, and some shorter term variations to it. We could also remove the annual cycle in other ways, such as by calculating the average annual cycle and subtracting that from the data. Then we could calculate the long-term trend from the data that has been cleaned from the annual cycle. We could maybe have also fitted the regression to smaller intervals of the years separately, as it is clear that the slope of the trend is not totally constant. From the variation of the coefficient, we could have seen how the rate of increase changes over time. This could tell us of the anthropogenic emissions and the fraction of them that stays in the atmosphere. 
 
+On the other hand, we could have removed the long term trend from the data, and looked at only the annual variation. Seeing how this changes over time might reveal something about the biospheric processes controlling the annual variation. Comparign the annual variation in different stations could have revealed differences between the hemispheres, and also between latitudes within hemispheres. 
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+Unfortunately, I am running out of time and these extra analyses will not materialize for this report. Instead, I will leave them to the future. I also hope that I didn't disappoint too much with this incomplete report:)
+
