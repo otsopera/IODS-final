@@ -14,17 +14,29 @@ output:
 
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(fig.width=12, fig.height=8,
+                      echo=FALSE, warning=FALSE, message=FALSE)
 ```
 
-## R Markdown
+## Introduction
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+In this final assignment, I will be analysing data on carbon dioxide concentration from four measurement sites around the world. The data can be found from National Ocean and Atmosphere Administration (NOAA) [here](https://www.esrl.noaa.gov/gmd/dv/data/index.php?parameter_name=Carbon%2BDioxide&type=Insitu). The measurement sites I will analyze are Mauna Loa in Hawaii (MLO), Barrow in Alaska (BRW), Tutuila in American Samoa (SMO), and South Pole, Antarctica (SPO). Carbon dioxide is the main greenhouse gas responsible for anthropogenically enhanced greenhouse effect, and thus climate change. Therefore it is important to understand its behaviour in the atmosphere. I will try to analyze the rate of its increase, seasonal differences and the differences between the measurement stations. 
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+```{r load_data}
 
-```{r cars}
-summary(cars)
+
+# clear all variables possibly left over from previous sessions
+rm(list = ls())
+
+# load libraries
+
+library(GGally)
+library(ggplot2)
+library(dplyr)
+
+# load the data
+CO2_all <- read.table("./data/CO2_4_sites.txt",header = T,  dec = ".")
+
 ```
 
 ## Including Plots
