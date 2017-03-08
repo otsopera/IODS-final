@@ -39,12 +39,29 @@ CO2_all <- read.table("./data/CO2_4_sites.txt",header = T,  dec = ".")
 
 ```
 
+I have already wrangled the data into an easily analyzable form: the wrangling script can be found [here](https://github.com/otsopera/IODS-final/blob/master/data/create_CO2.R). The wrangled data contains `r nrow(CO2_all) ` monthly carbon dioxide concentration values from the stations. Some of the observations are missing. In total, the data contains `r ncol(CO2_all) ` variables, which are the following:
+
+```{r vars}
+
+variable.names(CO2_all)
+
+
+```
+
+Here the variable suffixes (_MLO, _BRW, _SMO, _SPO) tell the station where the measurement comes from. Tha variable value is the monthly mean carbon dioxide concentration, in parts per million (ppm). value_unc is the uncertainty estimate for the measurement, also in ppm. nvalue tells how many individual measurements have gone into the value: for one monthly value, multiple individual measurements have been averaged. Lastly, the date_time tells the month that the measurement corresponds to. 
+
+
+
+
 ## Including Plots
 
 You can also embed plots, for example:
 
 ```{r pressure, echo=FALSE}
-plot(pressure)
+
+
+
+qplot(date_time,value_MLO,data = CO2_all) 
 ```
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
