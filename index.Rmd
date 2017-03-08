@@ -1,6 +1,6 @@
 ---
 title: "IODS final project"
-author: "Otso Perakyla"
+author: "Otso Perakyla, otso.perakyla@helsinki.fi"
 output:
   html_document:
     theme: journal
@@ -15,10 +15,20 @@ output:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(fig.width=12, fig.height=8,
-                      echo=FALSE, warning=FALSE, message=FALSE)
+                      echo=TRUE, warning=FALSE, message=FALSE)
 ```
 
+
+## Abstract
+
+I analyzed the carbon dioxide concentration in Mauna Loa, Hawaii, and South Pole, Antarctica from 1974 to 2015. During this time, the concentration in Mauna Loa has increased around 1.7 ppm per year. The increase has not been steady, but slower at first and faster more recently. There is also a strong seasonal cycle in the concentration, with maximum values in the Northern Hemisphere spring, and minimum in autumn. For the annual pattern, opposite behaviour is seen for the South Pole, to correspond to the seasons in the Southern Hemisphere.
+
+
+
 ## Introduction
+
+
+
 
 In this final assignment, I will be analysing data on carbon dioxide concentration from four measurement sites around the world. The data can be found from National Ocean and Atmosphere Administration (NOAA) [here](https://www.esrl.noaa.gov/gmd/dv/data/index.php?parameter_name=Carbon%2BDioxide&type=Insitu). The measurement sites I will analyze are Mauna Loa in Hawaii (MLO), Barrow in Alaska (BRW), Tutuila in American Samoa (SMO), and South Pole, Antarctica (SPO). Carbon dioxide is the main greenhouse gas responsible for anthropogenically enhanced greenhouse effect, and thus climate change. Therefore it is important to understand its behaviour in the atmosphere. I will try to analyze the rate of its increase, seasonal differences and the differences between the measurement stations. 
 
@@ -67,9 +77,9 @@ The data starts from the year 1974 and ends in 2015. The full CO$_2$ data from M
 
 There are a few immediately obvious features in the data. First of all, the carbon dioxide concentration has been constantly rising. The concentration starts at around 330 ppm in 1974, and rises up to around 400 ppm by 2015. This is caused by anthropogenic carbon emissions. On short term, around half of the anthropogenic emissions end up in the atmosphere. Roughly one quarter each is taken up by the oceans and the land biosphere. 
 
-The other notable feature is the annual cycle of the carbon dioxide concentration. Each year, the highest concentrations are seen in the spring, and the lowes ones in the autumn. This cycle is caused by the biosphere. In the northern hemispheric winter, there is little photsynthesis, so the vegetation takes up only little carbon dioxide. Still, the biosphere is breathing all the time and releasing carbon dioxide into the air. This leads to accumulation of carbon dioxide over the winter, and maximum concentrations in the spring. In the summer, the photosynthesis works its wonders and vegetation captures large quantities of carbon dioxide from the air. This means that during the summer the carbon dioxide concentration temporarily decreases, and reaches its minimum in the autumn. On the timescale of more than a few years, the biosphere takes up slightly more carbon than it releases. This extra carbon comes from anthropogenis emissions: as said earlier, around a quarter of them end up in the biosphere. 
+The other notable feature is the annual cycle of the carbon dioxide concentration. Each year, the highest concentrations are seen in the spring, and the lowes ones in the autumn. This cycle is caused by the biosphere. In the Northern Hemisphere winter, there is little photsynthesis, so the vegetation takes up only little carbon dioxide. Still, the biosphere is breathing all the time and releasing carbon dioxide into the air. This leads to accumulation of carbon dioxide over the winter, and maximum concentrations in the spring. In the summer, the photosynthesis works its wonders and vegetation captures large quantities of carbon dioxide from the air. This means that during the summer the carbon dioxide concentration temporarily decreases, and reaches its minimum in the autumn. On the timescale of more than a few years, the biosphere takes up slightly more carbon than it releases. This extra carbon comes from anthropogenis emissions: as said earlier, around a quarter of them end up in the biosphere. 
 
-So the general trend in the carbon dioxide concentration measured in Mauna Loa can be explained by the long-term increase, caused by mankind, and the annual cycle, caused by vegetation. In the southern hemisphere the situation is slightly different. Let's look at the data from South Pole to see exactly how it differs.  
+So the general trend in the carbon dioxide concentration measured in Mauna Loa can be explained by the long-term increase, caused by mankind, and the annual cycle, caused by vegetation. In the Southern Hemisphere the situation is slightly different. Let's look at the data from South Pole to see exactly how it differs.  
 
 ```{r SPO_CO2, echo=FALSE}
 
@@ -84,9 +94,9 @@ p2
 
 Now the data starts from the end of 1975, and there is a small break after a couple of years. We can see the same general increase in the concentration as we saw in the Mauna Loa data. This tells us that the rising carbon dioxide level is a global phenomenon: CO$_2$ is a long lived greenhouse gas, and has time to get evenly distributed in the atmosphere.
 
-What is different from Mauna Loa is that now the annual variation is much smaller. Another difference, which you might not see that easily due to the bac ticks, is that the annual variation is in the opposite phase compared to Mauna Loa. Now we have the highest concentrations measured in the northern hemispheric autumn, and lowest in the spring. The opposite behaviour is caused by the seasons being flipped: in the southern hemisphere the summer is coincident with the northern hemispheric winter, and vice versa. The smaller annual variation, or amplitude, is caused by there being less land vegetation in the high latitudes of the southern hemisphere. And as there is less vegetation, there is less variation in photosynthesis, and smaller amplitude in the annual variation. So the annual variation tells us something about the activity of the vegetation: a high amplitude means lot of vegetation in the high latitudes.    
+What is different from Mauna Loa is that now the annual variation is much smaller. Another difference is that the annual variation is in the opposite phase compared to Mauna Loa. Now we have the highest concentrations measured in the northern hemispheric autumn, and lowest in the spring. The opposite behaviour is caused by the seasons being flipped: in the Southern Hemisphere the summer is coincident with the Northern Hemisphere winter, and vice versa. The smaller annual variation, or amplitude, is caused by there being less land vegetation in the high latitudes of the Southern Hemisphere. And as there is less vegetation, there is less variation in photosynthesis, and smaller amplitude in the annual variation. So the annual variation tells us something about the activity of the vegetation: a high amplitude means lot of vegetation in the high latitudes.    
 
-To compare the two series more directly, we can plot them in the same figure:
+To compare the two series more directly, we can plot them in the same figure. This requires a bit of trickstery, as we need to reformat the data a bit. To plot the two series in the same figure, we need to combine the two into long vectors, or in other words melt them together. We do this using the reshape2 library and melt function, which also adds the name of the station to each observation, so we can colour the points by station.
 
 
 
@@ -109,7 +119,7 @@ p3 + geom_point()  + theme(text = element_text(size=20)) + labs(y=expression(CO[
 
 ```
 
-We now notice that the CO$_2$ measured at South Pole is also slightly lower compared to Mauna Loa. This is due to most of the anthropogenic carbon emissions happening in the Northern Hemisphere. It takes some time for the emissions to mix across the equator: this causes the gradient between the hemispheres. 
+In this figure, the difference in the annual pattern is clear. We now notice that the CO$_2$ measured at South Pole is also slightly lower compared to Mauna Loa. This is due to most of the anthropogenic carbon emissions happening in the Northern Hemisphere. It takes some time for the emissions to mix across the equator: this causes the gradient between the hemispheres. 
 
 So far we have seen that the time series of carbon dioxide concentration can tell us many things. The constant increase tells of anthropogenic carbon emissions. This shows also in the inter-hemispheric gradient of the CO$_2$ concentration. The amplitude of the annual variation tells us about the activity of the biosphere. The higher the amplitude, the more active the biosphere is. Next we will see how much information we can dig from these time series. I will analyze the Mauna Loa and the South Pole data. In addition, I will look at the data from Barrow (a station in Alaska, at a high latitude in the Northern Hemisphere), and American Samoa (a station in the Pacific Ocean, at low latitude in the Southern Hemisphere). So in total I will analyze data from four stations: two in the Nothern Hemisphere, and two in the Southern. 
 
@@ -119,7 +129,7 @@ To calculate the overall growth rate of the CO$_2$ concentration in Mauna Loa, I
 
 
 
-```{r make_first_model, echo = T}
+```{r make_first_model}
 
 CO2_all$date_years = CO2_all$date_time/(60*60*24*365.25)
 my_model <- lm(MLO ~ date_years, data = CO2_all)
@@ -148,7 +158,7 @@ plot(as.POSIXct(date_time_MLO,origin="1970-01-01"),resid(my_model)) + theme(text
 
 
 
-We can see that there clearly is some systematic variation in the residuals. The residuals keep on decreasing until around 1995, and increasing after that. This means that until 1995, the model has been over-estimating the growth rate of carbon dioxide concentration, and after that it has been underestimating it. So the dependence is not a simple, purely linear one as we already suspected. Additionally, the seasonal cycle of the concentrations can also be seen in the residuals, although it is less clear now. 
+We can see that there clearly is some systematic variation in the residuals. The residuals keep on decreasing until around 1995, and increasing after that. This means that until 1995, the model has been over-estimating the growth rate of carbon dioxide concentration, and after that it has been underestimating it. This is most probably mainly caused by mankinds increasing greenhouse gas emissions. So the dependence is not a simple, purely linear one as we already suspected. Additionally, the seasonal cycle of the concentrations can also be seen in the residuals, although it is less clear now. 
 
 We could average the data over one year to get rid of the annual cycle: this woul leave us with the long-term increasing trend, and some shorter term variations to it. We could also remove the annual cycle in other ways, such as by calculating the average annual cycle and subtracting that from the data. Then we could calculate the long-term trend from the data that has been cleaned from the annual cycle. We could maybe have also fitted the regression to smaller intervals of the years separately, as it is clear that the slope of the trend is not totally constant. From the variation of the coefficient, we could have seen how the rate of increase changes over time. This could tell us of the anthropogenic emissions and the fraction of them that stays in the atmosphere. 
 
